@@ -121,7 +121,7 @@ fn create_limit_order(program_id: &Pubkey, accounts: &[AccountInfo], price: u32)
     let current_associated_account_info = next_account_info(account_info_iter)?;
     let metadata_account_info = next_account_info(account_info_iter)?;
 
-    let collection_data: CollectionData = try_from_slice_unchecked(&collection_pda_info.data.borrow())?;
+    let mut collection_data: CollectionData = try_from_slice_unchecked(&collection_pda_info.data.borrow())?;
 
     let collection_unique_bump = collection_data.max_listed;
     let (container_pda, container_pda_bump) = Pubkey::find_program_address( &[b"Gamestree_seed", &collection_unique_bump.to_be_bytes(), &collection_account_info.key.to_bytes()], program_id);
@@ -131,7 +131,8 @@ fn create_limit_order(program_id: &Pubkey, accounts: &[AccountInfo], price: u32)
         Err(ProgramError::InvalidAccountData)?
     }
 
-    if collection_data.max_listed >= collection_data.max_ever{
+    if collection_data.max_listed == collection_data.max_ever{
+        collection_data.max_ever +=  1;
         let space = 50;
         let lamports = Rent::get()?.minimum_balance(space as usize);
         invoke_signed(
@@ -211,6 +212,10 @@ fn create_limit_order(program_id: &Pubkey, accounts: &[AccountInfo], price: u32)
             payer_account_info.clone(),
         ]
     )?;
+    collection_data.max_listed += 1;
+
+    collection_data.serialize(&mut &mut collection_pda_info.data.borrow_mut()[..])?;
+
 
     Ok(())
 }
