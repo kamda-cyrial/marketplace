@@ -1,0 +1,15 @@
+[package]
+name = "marketplace"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+borsh = "0.9.1"
+borsh-derive = "0.9.1"
+solana-program = "=1.9.5"
+# solana-sdk = "1.9.4"
+spl-token = { version = "3.2.0", features = ["no-entrypoint"]}
+spl-associated-token-account = { version = "1.0.3", features = ["no-entrypoint"]}
+metaplex-token-metadata = { version = "0.0.1", features = ["no-entrypoint"]}
